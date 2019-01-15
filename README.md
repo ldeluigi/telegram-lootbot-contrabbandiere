@@ -7,7 +7,8 @@ Inoltre l'SQL è valido e testato solo su un dbms MySQL.
 ## Setup
 Una volta che i sorgenti compilano è necessario impostare a mano il webhook da telegram.
 Un vettore dei config è contenuto dentro il file \_config.php, mentre altre impostazioni vanno settate per update_items.php
-Inoltre sarebbe opportuno eseguire periodicamente lo script update_items.php per mantenere la tabella sugli oggetti aggiornata
+
+Inoltre sarebbe opportuno (ma non necessario) eseguire periodicamente lo script update_items.php per mantenere la tabella sugli oggetti aggiornata. In realtà non serve in quanto il bot aggiorna la tabella quando qualcuno inoltra un oggetto che non vi è presente.
 
 ## Deploy
 Se tutto funziona è possibile usare il bot da Telegram
