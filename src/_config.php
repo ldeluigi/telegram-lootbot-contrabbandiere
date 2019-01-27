@@ -1,7 +1,5 @@
 <?php
 
-
-
 $config = array(
 
 "formattazione_predefinita" => "HTML",
@@ -22,10 +20,21 @@ $config = array(
 ),
 "admins" => array(
 //elencare qui la lista degli admin abilitati al comando /reset (amministrazione del db del bot)
-)
+),
+
+// impostazioni per db
+"db_hostname" => "localhost",
+"db_username" => "root",
+"db_password" => "",
+"db_name" => "mydb",
+
+// inserire qui il token per le api di lootbot
+"lootbot_api_token" => "yourtoken"
 
 );
 
-$link = mysqli_connect($hostname, $username, $pwd);
-mysqli_select_db($link, my_db); // sostituire my_db col database che contiene la tabella `contrabbandi` e `items`
+$link = mysqli_connect($config["db_hostname"], $config["db_username"], $config["db_password"]);
+if ($link != FALSE) {
+     mysqli_select_db($link, $config["db_name"]); 
+}
 

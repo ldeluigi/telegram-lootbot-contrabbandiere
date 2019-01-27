@@ -9,7 +9,7 @@ $update = json_decode($content, true);
 var_dump($content);
 
 
-require 'config.php';
+require '_config.php';
 
 $api = $config['api'];
 $idadmin = $config['admin'];
