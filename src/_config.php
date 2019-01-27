@@ -26,5 +26,6 @@ $config = array(
 
 );
 
-mysql_select_db('my_db'); // sostituire my_db col database che contiene la tabella `contrabbandi` e `items`
+$link = mysqli_connect($hostname, $username, $pwd);
+mysqli_select_db($link, my_db); // sostituire my_db col database che contiene la tabella `contrabbandi` e `items`
 

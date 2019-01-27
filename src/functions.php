@@ -421,11 +421,11 @@ function free()
     global $username;
     global $chatID;
     global $idmsg;
-    $p = mysql_query("SELECT * FROM contrabbandi WHERE nome=\"".$username."\" ORDER BY time DESC");
-    $n = mysql_num_rows($p);
+    $p = mysqli_query($link, "SELECT * FROM contrabbandi WHERE nome=\"".$username."\" ORDER BY time DESC");
+    $n = mysqli_num_rows($p);
     if ($n>0) {
         //for ($i=0; $i<$n; $i++) {
-        $b = mysql_fetch_assoc($p);
+        $b = mysqli_fetch_assoc($p);
         $oldchatID = $b['chat_id'];
         $oldmessID = $b['message_id'];
         $item = $b['item'];
@@ -435,7 +435,7 @@ function free()
         $prenotata = (strpos($b['test'], '*') === 0);
         if (!$prenotata and !isLibero($prezzo)) {
             $prezzo = liberaPrezzo($prezzo);
-            mysql_query("UPDATE contrabbandi SET prezzo=\"$prezzo\" WHERE test=\"".$b['test']."\"");
+            mysqli_query($link, "UPDATE contrabbandi SET prezzo=\"$prezzo\" WHERE test=\"".$b['test']."\"");
             repost(true);
             $m = sm($chatID, "📭 $username, ho reso la tua ultima richiesta ad offerta libera.");
             sleep(5);
@@ -460,12 +460,12 @@ function clear()
     global $username;
     global $chatID;
     global $idmsg;
-    $p = mysql_query("SELECT * FROM contrabbandi WHERE nome=\"".$username."\"");
-    $n = mysql_num_rows($p);
+    $p = mysqli_query($link, "SELECT * FROM contrabbandi WHERE nome=\"".$username."\"");
+    $n = mysqli_num_rows($p);
     if ($n>0) {
         for ($i=0; $i<$n; $i++) {
-            $b = mysql_fetch_assoc($p);
-            mysql_query("DELETE FROM contrabbandi WHERE test=\"".$b['test']."\"");
+            $b = mysqli_fetch_assoc($p);
+            mysqli_query($link, "DELETE FROM contrabbandi WHERE test=\"".$b['test']."\"");
             $oldchatID = $b['chat_id'];
             $oldmessID = $b['message_id'];
             $item = $b['item'];
@@ -495,10 +495,10 @@ function repost($free = false)
     global $chatID;
     global $idmsg;
     global $userID;
-    $q = mysql_query(utf8_decode("SELECT * FROM contrabbandi WHERE nome=\"".$username."\" ORDER BY time DESC"));
-    $n = mysql_num_rows($q);
+    $q = mysqli_query($link, utf8_decode("SELECT * FROM contrabbandi WHERE nome=\"".$username."\" ORDER BY time DESC"));
+    $n = mysqli_num_rows($q);
     if ($n) {
-        $b = mysql_fetch_assoc($q);
+        $b = mysqli_fetch_assoc($q);
         $creazione = $b['creation'];
         $nome = $b['nome'];
         $item = $b['item'];
@@ -531,7 +531,7 @@ function repost($free = false)
                             $c = mb_substr($test, 0, 8);
                             $pc = getPC($item);
                             $k = sm($chatID, "👤 <a href=\"tg://user?id=$userID\">$nome</a>\n🛠 <b>$item</b>\n📦 $pc pc\n💰 $prezzo §\n🏷 #".((is_numeric($c)) ? $c."x" : $c), $menu, 'pred', false);
-                            mysql_query(utf8_decode("UPDATE contrabbandi SET time=".((string)time()).", message_id=$k, chat_id=$chatID WHERE test=\"".$test."\""));
+                            mysqli_query($link, utf8_decode("UPDATE contrabbandi SET time=".((string)time()).", message_id=$k, chat_id=$chatID WHERE test=\"".$test."\""));
                             if (($oldchatID!=0) and ($oldmessID!=0)) {
                                 if ($free) {
                                     $d_suc = delm($oldchatID, $oldmessID);
@@ -560,7 +560,7 @@ function repost($free = false)
                             $c = mb_substr($test, 0, 8);
                             $pc = getPC($item);
                             $k = sm($chatID, "👤 <a href=\"tg://user?id=$userID\">$nome</a>\n🛠 <b>$item</b>\n📦 $pc pc\n💰 $prezzo §\n🏷 #".((is_numeric($c)) ? $c."x" : $c), $menu, 'pred', false);
-                            mysql_query(utf8_decode("UPDATE contrabbandi SET time=".((string)time()).", message_id=$k, chat_id=$chatID WHERE test=\"".$test."\""));
+                            mysqli_query($link, utf8_decode("UPDATE contrabbandi SET time=".((string)time()).", message_id=$k, chat_id=$chatID WHERE test=\"".$test."\""));
                             if (($oldchatID!=0) and ($oldmessID!=0)) {
                                 if ($free) {
                                     $d_suc = delm($oldchatID, $oldmessID);
@@ -578,7 +578,7 @@ function repost($free = false)
                 }
             } else {
                 $m=sm($chatID, "📆 $username, la tua ultima richiesta non risale ad oggi, inoltrane una nuova. Nel frattempo provvederò ad eliminarla.");
-                mysql_query(utf8_decode("DELETE FROM contrabbandi WHERE test=\"".$b['test']."\""));
+                mysqli_query($link, utf8_decode("DELETE FROM contrabbandi WHERE test=\"".$b['test']."\""));
                 if (($oldchatID!=0) and ($oldmessID!=0)) {
                     editm($oldchatID, $oldmessID, "👴🏻 Questa offerta è obsoleta. (Oggetto: <b>$item</b>, Prezzo:$prezzo, Proprietario: $nome)");
                 }
@@ -613,13 +613,13 @@ function search()
         $thischat = $titolo;
     }
     $limit = time() - 86400;
-    $p = mysql_query("SELECT * FROM contrabbandi WHERE (creation>$limit) AND (test NOT LIKE \"*%\") AND chat_id=$chat ORDER BY time DESC");
-    $n = mysql_num_rows($p);
+    $p = mysqli_query($link, "SELECT * FROM contrabbandi WHERE (creation>$limit) AND (test NOT LIKE \"*%\") AND chat_id=$chat ORDER BY time DESC");
+    $n = mysqli_num_rows($p);
     if ($n>0) {
         $k = 0;
         $oggi = date("z");
         for ($i=0; ($i<$n) and ($i<15); $i++) {
-            $b = mysql_fetch_assoc($p);
+            $b = mysqli_fetch_assoc($p);
             $creazione = $b['creation'];
             $item = $b['item'];
             $prezzo = $b['prezzo'];
@@ -673,12 +673,12 @@ function fm($chat_id, $from_chat_id, $message_id, $disable_notification = false)
 
 function dbreset()
 {
-    $p = mysql_query("SELECT * FROM contrabbandi");
-    $n = mysql_num_rows($p);
+    $p = mysqli_query($link, "SELECT * FROM contrabbandi");
+    $n = mysqli_num_rows($p);
     if ($n>0) {
         for ($i=0; $i<$n; $i++) {
-            $b = mysql_fetch_assoc($p);
-            mysql_query("DELETE FROM contrabbandi WHERE test=\"".$b['test']."\"");
+            $b = mysqli_fetch_assoc($p);
+            mysqli_query($link, "DELETE FROM contrabbandi WHERE test=\"".$b['test']."\"");
             $oldchatID = $b['chat_id'];
             $oldmessID = $b['message_id'];
             $item = $b['item'];
@@ -710,8 +710,8 @@ function getPC($item)
     if (mb_strpos($item, " (")!==false) {
         $item = mb_substr($item, 0, mb_strpos($item, " ("));
     }
-    $item_q = mysql_query(utf8_decode("SELECT * FROM items WHERE name=\"$item\""));
-    while ($i = mysql_fetch_assoc($item_q)) {
+    $item_q = mysqli_query($link, utf8_decode("SELECT * FROM items WHERE name=\"$item\""));
+    while ($i = mysqli_fetch_assoc($item_q)) {
         if (utf8_encode($i['name']) == $item) {
             return ((string) $i['craft_pnt']);
         }

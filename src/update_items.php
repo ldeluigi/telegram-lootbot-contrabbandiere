@@ -1,4 +1,7 @@
 <?php
+
+require 'config.php';
+
 if (!function_exists("richiesta_API")) {
     function richiesta_API($url)
     {
@@ -13,10 +16,10 @@ if (!function_exists("richiesta_API")) {
     }
 }
 // CONFIGURAZIONE SCRIPT
-mysql_select_db("my_db"); //nome del db
-$token = 'token'; // token delle API di loot bot
+$link = mysqli_connect($config["db_hostname"], $config["db_username"], $config["db_password"]);
+mysqli_select_db($link, $config["db_name"]); 
 
-$items = richiesta_API("http://fenixweb.net:3300/api/v2/$token/items");
+$items = richiesta_API("http://fenixweb.net:3300/api/v2/" . $config["lootbot_api_token"] . "/items");
 $dec = json_decode($items, true);
 if (!is_array($dec)) {
     return;
@@ -25,22 +28,22 @@ $arr = $dec["res"];
 if ($dec["code"] == 200 and $arr[0]["id"]) {
     foreach ($arr as $i) {
         $itemID = $i['id'];
-        $n = mysql_num_rows(mysql_query(utf8_decode("SELECT * FROM items WHERE id=$itemID")));
+        $n = mysqli_num_rows(mysqli_query($link, utf8_decode("SELECT * FROM items WHERE id=$itemID")));
         if ($n>0) {
-            $check = mysql_query(utf8_decode("UPDATE items SET name=\"".$i['name']."\",rarity=\"".$i['rarity']."\",description=\"".$i['description']."\",value=".$i['value'].",estimate=".$i['estimate'].",craftable=".$i['craftable'].",reborn=".$i['reborn'].",power=".$i['power'].",power_armor=".$i['power_armor'].",power_shield=".$i['power_shield'].",dragon_power=".$i['dragon_power'].",critical=".$i['critical'].",allow_sell=".$i['allow_sell'].",craft_pnt=".$i['craft_pnt']." WHERE id=$itemID"));
+            $check = mysqli_query($link, utf8_decode("UPDATE items SET name=\"".$i['name']."\",rarity=\"".$i['rarity']."\",description=\"".$i['description']."\",value=".$i['value'].",estimate=".$i['estimate'].",craftable=".$i['craftable'].",reborn=".$i['reborn'].",power=".$i['power'].",power_armor=".$i['power_armor'].",power_shield=".$i['power_shield'].",dragon_power=".$i['dragon_power'].",critical=".$i['critical'].",allow_sell=".$i['allow_sell'].",craft_pnt=".$i['craft_pnt']." WHERE id=$itemID"));
         } else {
-            $check = mysql_query(utf8_decode("INSERT INTO items (`id`, `name`, `rarity`, `description`, `value`, `estimate`, `craftable`, `reborn`, `power`, `power_armor`, `power_shield`, `dragon_power`, `critical`, `allow_sell`, `craft_pnt`) VALUES ($itemID,\"".$i['name']."\",\"".$i['rarity']."\",\"".$i['description']."\",".$i['value'].",".$i['estimate'].",".$i['craftable'].",".$i['reborn'].",".$i['power'].",".$i['power_armor'].",".$i['power_shield'].",".$i['dragon_power'].",".$i['critical'].",".$i['allow_sell'].",".$i['craft_pnt'].")"));
+            $check = mysqli_query($link, utf8_decode("INSERT INTO items (`id`, `name`, `rarity`, `description`, `value`, `estimate`, `craftable`, `reborn`, `power`, `power_armor`, `power_shield`, `dragon_power`, `critical`, `allow_sell`, `craft_pnt`) VALUES ($itemID,\"".$i['name']."\",\"".$i['rarity']."\",\"".$i['description']."\",".$i['value'].",".$i['estimate'].",".$i['craftable'].",".$i['reborn'].",".$i['power'].",".$i['power_armor'].",".$i['power_shield'].",".$i['dragon_power'].",".$i['critical'].",".$i['allow_sell'].",".$i['craft_pnt'].")"));
             echo("Nuovo item: ".$i["name"]);
         }
-        mysql_query("INSERT INTO updates (chatID, title, text) VALUES (340271798, \"Nuovo item\", \"".$i["name"]."\")");
+        mysqli_query($link, "INSERT INTO updates (chatID, title, text) VALUES (340271798, \"Nuovo item\", \"".$i["name"]."\")");
         var_dump($check);
         if (!$check) {
-            echo(mysql_error());
+            echo(mysqli_error($link));
         }
     }
 }
 
-$items = richiesta_API("http://fenixweb.net:3300/api/v2/$token/items");
+$items = richiesta_API("http://fenixweb.net:3300/api/v2/" . $config["lootbot_api_token"] . "/items");
 $dec = json_decode($items, true);
 if (!is_array($dec)) {
     return;
@@ -49,9 +52,9 @@ $arr = $dec["res"];
 if ($dec["code"] == 200 and $arr[0]["id"]) {
     foreach ($arr as $i) {
         $itemID = $i['material_result'];
-        $check = mysql_query(utf8_decode("UPDATE items SET material_1=".$i['material_1'].",material_2=".$i['material_2'].",material_3=".$i['material_3']." WHERE id=$itemID"));
+        $check = mysqli_query($link, utf8_decode("UPDATE items SET material_1=".$i['material_1'].",material_2=".$i['material_2'].",material_3=".$i['material_3']." WHERE id=$itemID"));
         if (!$check) {
-            echo(mysql_error());
+            echo(mysqli_error($link));
         }
     }
 }
