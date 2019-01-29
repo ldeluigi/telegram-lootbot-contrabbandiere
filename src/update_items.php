@@ -1,6 +1,6 @@
 <?php
 
-require 'config.php';
+require '_config.php';
 
 if (!function_exists("richiesta_API")) {
     function richiesta_API($url)
