@@ -18,6 +18,8 @@ $config = array(
 "groups" => array(
 //elencare qui gli id delle chat in cui il bot è abilitato
 ),
+// true significa che verrà disabilitato il controllo sul gruppo
+"allow_all_groups" => false,
 "admins" => array(
 //elencare qui la lista degli admin abilitati al comando /reset (amministrazione del db del bot)
 ),

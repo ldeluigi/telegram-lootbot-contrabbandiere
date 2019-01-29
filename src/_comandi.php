@@ -26,7 +26,7 @@ if (strpos($msg, "/ping")===0) {
 //COMANDI
 if ($chatID==$userID) {
     if ($msg == "/start") {
-        sm($chatID, "In privato posso dirti se qualcuno si prenota ad una tua offerta.");
+        sm($chatID, "In privato posso dirti se qualcuno si prenota ad una tua offerta.\n\nSorgenti: https://github.com/ldeluigi/telegram-lootbot-contrabbandiere");
     } elseif ($msg == "/clear") {
         clear();
     } elseif ($msg == "/search") {
@@ -40,7 +40,7 @@ if ($chatID==$userID) {
         sm($chatID, json_encode(is_between_times('00:28', '22:44')));
     }
     return;
-} elseif (!in_array($chatID, $groups)) {
+} else if (!in_array($chatID, $groups) and $config["allow_all_groups"] !== true) {
     sm($chatID, "Questo gruppo [ID:<code>$chatID</code>] non è abilitato.\n\n<i>Grazie e arrivederci</i>");
     leave();
     return;
