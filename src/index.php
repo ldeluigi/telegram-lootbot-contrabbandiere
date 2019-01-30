@@ -6,7 +6,7 @@ require 'class-http-request.php';
 $content = file_get_contents("php://input");
 $update = json_decode($content, true);
 
-require 'config.php';
+require '_config.php';
 require 'db.php';
 
 $api = $config['api'];
