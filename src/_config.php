@@ -34,9 +34,3 @@ $config = array(
 "lootbot_api_token" => "yourtoken"
 
 );
-
-$link = mysqli_connect($config["db_hostname"], $config["db_username"], $config["db_password"]);
-if ($link != FALSE) {
-     mysqli_select_db($link, $config["db_name"]); 
-}
-
