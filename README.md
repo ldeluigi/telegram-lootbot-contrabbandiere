@@ -1,7 +1,7 @@
 # telegram-lootbot-contrabbandiere
 
 ## Requisiti
-Le query sul db usano mysqli per questo l'SQL è valido e testato solo su un dbrms MySQL.
+Le query sul db usano mysqli per questo l'SQL è valido e testato solo su un dbms MySQL.
 
 ## Setup
 Una volta che i sorgenti compilano è necessario impostare a mano il webhook da telegram.
