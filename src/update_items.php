@@ -1,6 +1,7 @@
 <?php
 
 require '_config.php';
+require 'db.php';
 
 if (!function_exists("richiesta_API")) {
     function richiesta_API($url)
@@ -15,9 +16,6 @@ if (!function_exists("richiesta_API")) {
         return $result;
     }
 }
-// CONFIGURAZIONE SCRIPT
-$link = mysqli_connect($config["db_hostname"], $config["db_username"], $config["db_password"]);
-mysqli_select_db($link, $config["db_name"]); 
 
 $items = richiesta_API("http://fenixweb.net:3300/api/v2/" . $config["lootbot_api_token"] . "/items");
 $dec = json_decode($items, true);
@@ -35,7 +33,6 @@ if ($dec["code"] == 200 and $arr[0]["id"]) {
             $check = mysqli_query($link, utf8_decode("INSERT INTO items (`id`, `name`, `rarity`, `description`, `value`, `estimate`, `craftable`, `reborn`, `power`, `power_armor`, `power_shield`, `dragon_power`, `critical`, `allow_sell`, `craft_pnt`) VALUES ($itemID,\"".$i['name']."\",\"".$i['rarity']."\",\"".$i['description']."\",".$i['value'].",".$i['estimate'].",".$i['craftable'].",".$i['reborn'].",".$i['power'].",".$i['power_armor'].",".$i['power_shield'].",".$i['dragon_power'].",".$i['critical'].",".$i['allow_sell'].",".$i['craft_pnt'].")"));
             echo("Nuovo item: ".$i["name"]);
         }
-        var_dump($check);
         if (!$check) {
             echo(mysqli_error($link));
         }
