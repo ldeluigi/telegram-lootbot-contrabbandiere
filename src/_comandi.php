@@ -7,7 +7,6 @@ function digest($string)
 
 function prepare_for_db($query)
 {
-    //return utf8_decode($query); se il db è in utf8 e non funziona qualcosa
     return $query;
 }
 
@@ -38,7 +37,35 @@ if ($chatID==$userID) {
         dbreset();
     } elseif ($msg == "/culo") {
         sm($chatID, json_encode(is_between_times('00:28', '22:44')));
-    }
+    } elseif (strcasecmp($msg, "/alwaysFree")===0) {
+		$q = mysqli_query($link, "INSERT INTO c_users (tid, free) VALUES ($userID, 1) ON DUPLICATE KEY UPDATE free=1");
+		if ($q) {
+			sm($chatID, "$username, ho impostato le tue offerte sempre libere");
+		} else {
+			sm($chatID, "Qualcosa è andato storto.");
+		}
+	} elseif (strcasecmp($msg, "/alwaysPvt")===0) {
+		$q = mysqli_query($link, "INSERT INTO c_users (tid, pvt) VALUES ($userID, 1) ON DUPLICATE KEY UPDATE pvt=1");
+		if ($q) {
+			sm($chatID, "$username, ho impostato le tue offerte sempre su negozi privati");
+		} else {
+			sm($chatID, "Qualcosa è andato storto.");
+		}
+	} elseif (strcasecmp($msg, "/neverFree")===0) {
+		$q = mysqli_query($link, "INSERT INTO c_users (tid, free) VALUES ($userID, 0) ON DUPLICATE KEY UPDATE free=0");
+		if ($q) {
+			sm($chatID, "$username, ho impostato le tue offerte mai libere");
+		} else {
+			sm($chatID, "Qualcosa è andato storto.");
+		}
+	} elseif (strcasecmp($msg, "/neverPvt")===0) {
+		$q = mysqli_query($link, "INSERT INTO c_users (tid, pvt) VALUES ($userID, 0) ON DUPLICATE KEY UPDATE pvt=0");
+		if ($q) {
+			sm($chatID, "$username, ho impostato le tue offerte mai su negozi privati");
+		} else {
+			sm($chatID, "Qualcosa è andato storto.");
+		}
+	}
     return;
 } else if (!in_array($chatID, $groups) and $config["allow_all_groups"] !== true) {
     sm($chatID, "Questo gruppo [ID:<code>$chatID</code>] non è abilitato.\n\n<i>Grazie e arrivederci</i>");
@@ -91,7 +118,7 @@ if (($inoltrato) and ($inoltrato_id==171514820) and (mb_strpos($msg, 'Benvenut')
             $price_1 = abs((int) filter_var($prezzo, FILTER_SANITIZE_NUMBER_INT));
             $i_query = mysqli_query($link, prepare_for_db("SELECT * FROM items WHERE name LIKE \"$item_1\""));
             if (mysqli_num_rows($i_query) == 0) {
-                $items = richiestaAPI("http://fenixweb.net:3300/api/v2/$token/items");
+                $items = richiestaAPI("https://fenixweb.net:6600/api/v2/$token/items");
                 $dec = json_decode($items, true);
                 $arr = $dec["res"];
                 if ($arr[0]["id"]) {
